@@ -12,7 +12,19 @@ export class AuthService {
   Login(loginObj: any) {
     return this.http.post<any>(`${this.baseUrl}authenticate`, loginObj);
   }
-  GetUserList(loginObj: any) {
-    return this.http.get<any>(`${this.baseUrl}getUser`, loginObj);
+  GetUserList() {
+    return this.http.get<any>(`${this.baseUrl}getUser`);
+  }
+  stroeToken(tokenValue: string) {
+    localStorage.setItem('token', tokenValue)
+  }
+  getToken() {
+    return localStorage.getItem('token');
+  }
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
+  signout(){
+    localStorage.removeItem('token');
   }
 }

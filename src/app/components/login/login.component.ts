@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validator, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { NgToastService } from 'ng-angular-popup';
 import ValidateForm from 'src/app/helpers/validateform';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -13,7 +15,7 @@ export class LoginComponent {
   isText: boolean = false;
   eyeIcon: string = "fa-eye-slash";
   loginForm!: FormGroup;
-  constructor(private formBuilder: FormBuilder, private authService: AuthService) {
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private router: Router, private toast: NgToastService) {
   }
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -23,10 +25,15 @@ export class LoginComponent {
   }
   onSubmit() {
     if (this.loginForm.valid) {
-      console.log(this.loginForm.value);
+      console.log(this.loginForm.value + "login sumbit");
       this.authService.Login(this.loginForm.value).subscribe({
-        next:(result)=>{(alert(result.message))},
-        error:(error)=>{alert(error.error.message)}
+        next: (result) => {
+          // alert(result.message)
+          this.toast.success({ detail: "Success", summary: result.message });
+          this.authService.stroeToken(result.token);
+          this.router.navigate(['dashboard']);
+        },
+        error: (error) => { this.toast.error({ detail: 'Error', summary: error.error.message }) }
       });
     }
     else {
